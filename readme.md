@@ -4,8 +4,8 @@ SimplePanorama is available under the [MIT License](https://github.com/TiloW/Sim
 
 ## Purpose
 
-SimplePanorama is some javascript code, allowing you to create a cyclindric panorama for your website in no time.
-SimplePanorama makes use of CSS3D transforms and gracefully falls back to other solutions if unavaibable.
+SimplePanorama is a javascript snippet, allowing you to create a cyclindric panorama for your website in no time.
+SimplePanorama makes use of CSS 3D Transforms and gracefully falls back to other solutions if unavaibable.
 
 ## Requirements
 
