@@ -1,6 +1,6 @@
 # SimplePanorama
 
-SimplePanorama is available under the [MIT License](https://github.com/tilow/simplepanorama/LICENSE).
+SimplePanorama is available under the [MIT License](https://github.com/TiloW/SimplePanorama/blob/master/LICENSE).
 
 ## Purpose
 
