@@ -1,0 +1,14 @@
+task :default => [:build_sass, :build_js]
+
+
+task :build_sass do
+  system 'sass src/sass/simple-panorama.sass:public/simple-panorama.css'
+end
+
+
+task :compile_coffee do
+  system 'coffee -o javascripts/compiled_coffee src/coffee'
+end
+
+task :build_js => [:compile_coffee] do
+end

@@ -1,0 +1,4 @@
+.project
+javascripts/compiled_coffee
+-p
+.sass-cache

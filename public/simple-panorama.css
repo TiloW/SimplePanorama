@@ -1,0 +1,24 @@
+.sp-container {
+  overflow: hidden;
+  position: relative; }
+  .sp-container div {
+    position: absolute;
+    top: 0; }
+
+.sp-hotspot {
+  position: absolute;
+  border: 1px solid white;
+  background-color: rgba(255, 255, 255, 0.75); }
+  .sp-hotspot.noTouchDevice {
+    background-color: rgba(0, 0, 0, 0); }
+  .sp-hotspot:hover {
+    -webkit-transition: background 0.5s ease-in;
+    -o-transition: background 0.5s ease-in;
+    -moz-transition: background 0.5s ease-in;
+    transition: background 0.5s ease-in;
+    background-color: rgba(255, 255, 255, 0.75); }
+  .sp-hotspot * {
+    background-color: rgba(0, 0, 0, 0); }
+
+.sp-rect div {
+  padding: 10px; }

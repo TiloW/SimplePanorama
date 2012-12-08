@@ -1,0 +1,28 @@
+.sp-container
+  overflow: hidden
+  position: relative
+
+  div
+    position: absolute
+    top: 0
+
+.sp-hotspot
+  position: absolute
+  border: 1px solid #FFF
+  background-color: rgba(255,255,255,.75)
+
+  &.noTouchDevice
+    background-color: rgba(0,0,0,0)
+
+  &:hover
+    -webkit-transition: background .5s ease-in
+    -o-transition: background .5s ease-in
+    -moz-transition: background .5s ease-in
+    transition: background .5s ease-in
+    background-color: rgba(255,255,255,.75)
+    
+  *
+    background-color: rgba(0,0,0,0)
+
+.sp-rect div
+  padding: 10px
