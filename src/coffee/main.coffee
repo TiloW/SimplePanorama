@@ -1,3 +1,8 @@
+###
+  @depends ../vendor/modernizr.js
+  @depends modules.js
+###
+
 window.simplePanorama =
   isTouchDevice: ->
     !!('ontouchstart' in window)
@@ -45,7 +50,6 @@ class SimplePanorama
         pano.elem.mousedown -> false
       pano.elem.attr("oncontextmenu", "return false;")
       
-      performLoadSpModules(pano)
       execAfterLoad()
   
     $(window).resize ->
