@@ -22,9 +22,9 @@ Take a look at the [demo section](https://github.com/TiloW/SimplePanorama/tree/m
 ### Creating a Panorama
 You can create a new panorama after your DOM is loaded.
 Here we create a panorama inside of the DOM element with id="myPanoContainer" and choose the image found at "../my_image.jpg".
-
-    new SimplePanorama($('#myPanoContainer'), '../my_image.jpg');
-	
+```javascript
+new SimplePanorama($('#myPanoContainer'), '../my_image.jpg');
+```
 	
 ### Basic Animation
 You can animate the panorama by setting the "targetSpeed".
