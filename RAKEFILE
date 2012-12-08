@@ -12,7 +12,9 @@ task :compile_coffee do
   else
     system "coffee -l -j #{output} -c #{modules}"
   end
-  system 'coffee -l -o js/compiled_coffee src/coffee/main.coffee'
+  
+  files = Dir['src/coffee/*.coffee'].join(" ")
+  system "coffee -l -o js/compiled_coffee #{files}"
 end
 
 task :build_js => [:compile_coffee] do

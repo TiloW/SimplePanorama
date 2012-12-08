@@ -1,18 +1,14 @@
 ###
+  @depends bootstrap.js
   @depends ../vendor/modernizr.js
   @depends modules.js
 ###
 
-window.simplePanorama =
-  isTouchDevice: ->
-    !!('ontouchstart' in window)
-
 class window.SimplePanorama
 
-  constructor: (DOMElement, imgFile, execAfterLoad) ->
+  constructor: (DOMElement, imgFile, execAfterLoad, modules = []) ->
     DOMElement.append('<div class="sp-container"></div>')
     @elem = DOMElement.find('div.sp-container')
-    console.log @elem
     @subElem = null
     @imgFile = imgFile
     @pos = 0.0
@@ -21,7 +17,7 @@ class window.SimplePanorama
     @counter = 0
     @hsCounter = 0
     @noTouchDevice = !simplePanorama.isTouchDevice()
-    @moduleData = []
+    @moduleData = {}
     
     unless Modernizr.csstransforms3d
       @updatePos = ->
@@ -50,6 +46,10 @@ class window.SimplePanorama
       if @noTouchDevice
         pano.elem.mousedown -> false
       pano.elem.attr("oncontextmenu", "return false;")
+      
+      $.each modules, (i, moduleId) ->
+        pano.moduleData[moduleId] = {}
+        simplePanorama.modules[moduleId](pano, pano.moduleData[moduleId])
       
       execAfterLoad?()
   
