@@ -51,6 +51,6 @@ Here we add support for moving the panorama by holding down the primary mousebut
     new SimplePanorama($('#myPanoContainer'), '../my_image.jpg', null, ['move_mousedown']);
 
 For now thoose are the modules available:
-- move_mousedown
-- move_mousehover
-- move_touch
+- move_mousedown : Move the panorama around by dragging it
+- move_mousehover : Move the panorama around by hovering over it
+- move_touch : Move the panorama around with a touchscreen
