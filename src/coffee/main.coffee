@@ -7,13 +7,14 @@ window.simplePanorama =
   isTouchDevice: ->
     !!('ontouchstart' in window)
 
-class SimplePanorama
+class window.SimplePanorama
 
   constructor: (DOMElement, imgFile, execAfterLoad) ->
-    @elem = DOMElement
+    DOMElement.append('<div class="sp-container"></div>')
+    @elem = DOMElement.find('div.sp-container')
+    console.log @elem
     @subElem = null
     @imgFile = imgFile
-    @elem.addClass("sp-container")
     @pos = 0.0
     @targetSpeed = 0
     @speed = 0
@@ -50,7 +51,7 @@ class SimplePanorama
         pano.elem.mousedown -> false
       pano.elem.attr("oncontextmenu", "return false;")
       
-      execAfterLoad()
+      execAfterLoad?()
   
     $(window).resize ->
       pano.width = if pano.img.width < pano.elem.width() then pano.img.width else pano.elem.parent().innerWidth()

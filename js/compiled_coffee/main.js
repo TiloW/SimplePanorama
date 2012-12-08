@@ -7,8 +7,7 @@
 
 
 (function() {
-  var SimplePanorama,
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+  var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   window.simplePanorama = {
     isTouchDevice: function() {
@@ -16,14 +15,15 @@
     }
   };
 
-  SimplePanorama = (function() {
+  window.SimplePanorama = (function() {
 
     function SimplePanorama(DOMElement, imgFile, execAfterLoad) {
       var pano;
-      this.elem = DOMElement;
+      DOMElement.append('<div class="sp-container"></div>');
+      this.elem = DOMElement.find('div.sp-container');
+      console.log(this.elem);
       this.subElem = null;
       this.imgFile = imgFile;
-      this.elem.addClass("sp-container");
       this.pos = 0.0;
       this.targetSpeed = 0;
       this.speed = 0;
@@ -62,7 +62,7 @@
           });
         }
         pano.elem.attr("oncontextmenu", "return false;");
-        return execAfterLoad();
+        return typeof execAfterLoad === "function" ? execAfterLoad() : void 0;
       };
       $(window).resize(function() {
         pano.width = pano.img.width < pano.elem.width() ? pano.img.width : pano.elem.parent().innerWidth();
