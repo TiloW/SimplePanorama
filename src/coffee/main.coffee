@@ -128,9 +128,9 @@ class window.SimplePanorama
     c2.appendTo(@subElem)
     
     if @noTouchDevice
-      animateChildren(elem)
-      animateChildren(c1)
-      animateChildren(c2)
+      @animateChildren(elem)
+      @animateChildren(c1)
+      @animateChildren(c2)
 
   animateChildren: (elem) -> 
     children = elem.children()

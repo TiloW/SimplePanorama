@@ -152,9 +152,9 @@
       c1.appendTo(this.subElem);
       c2.appendTo(this.subElem);
       if (this.noTouchDevice) {
-        animateChildren(elem);
-        animateChildren(c1);
-        return animateChildren(c2);
+        this.animateChildren(elem);
+        this.animateChildren(c1);
+        return this.animateChildren(c2);
       }
     };
 
