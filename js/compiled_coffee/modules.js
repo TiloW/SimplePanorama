@@ -41,7 +41,7 @@
     });
     $("*").on("touchmove", function(event) {
       if (data.touchStart !== void 0) {
-        return pano.targetSpeed = (data.touchStart - event.originalEvent.touches[0].pageX) / $(window).width() * 3;
+        return pano.targetSpeed = (data.touchStart - event.originalEvent.touches[0].pageX) / $(window).width() / 2;
       }
     });
     return $("*").on("touchend", function() {

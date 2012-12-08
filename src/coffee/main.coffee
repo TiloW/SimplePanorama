@@ -55,6 +55,7 @@ class window.SimplePanorama
   
     $(window).resize ->
       pano.width = if pano.img.width < pano.elem.width() then pano.img.width else pano.elem.parent().innerWidth()
+      # TODO: Fix pano.width for android devices
       pano.elem.css("width", pano.width + "px")
     
     @img.src = imgFile
