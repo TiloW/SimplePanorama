@@ -25,7 +25,6 @@
       this.speed = 0;
       this.counter = 0;
       this.hsCounter = 0;
-      this.noTouchDevice = !simplePanorama.isTouchDevice();
       this.moduleData = {};
       if (!Modernizr.csstransforms3d) {
         this.updatePos = function() {
@@ -52,11 +51,9 @@
         window.setInterval((function() {
           return pano.updatePano();
         }), 1);
-        if (this.noTouchDevice) {
-          pano.elem.mousedown(function() {
-            return false;
-          });
-        }
+        pano.elem.mousedown(function(event) {
+          return event.preventDefault();
+        });
         pano.elem.attr("oncontextmenu", "return false;");
         $.each(modules, function(i, moduleId) {
           pano.moduleData[moduleId] = {};
@@ -117,7 +114,7 @@
 
     SimplePanorama.prototype.prepareHotspot = function(content, cssClass, x, y, w, h) {
       var result;
-      if (this.noTouchDevice) {
+      if (!Modernizr.touch) {
         cssClass += " noTouchDevice";
       }
       this.subElem.append('<div class="sp-number-' + ++this.hsCounter + ' sp-hotspot ' + cssClass + '"><div class="sp-hotspot-content">' + content + '</div></div>');
@@ -150,7 +147,7 @@
       c2.css("left", left + this.img.width * 2 + "px");
       c1.appendTo(this.subElem);
       c2.appendTo(this.subElem);
-      if (this.noTouchDevice) {
+      if (!Modernizr.touch) {
         this.animateChildren(elem);
         this.animateChildren(c1);
         return this.animateChildren(c2);

@@ -16,7 +16,6 @@ class window.SimplePanorama
     @speed = 0
     @counter = 0
     @hsCounter = 0
-    @noTouchDevice = !simplePanorama.isTouchDevice()
     @moduleData = {}
     
     unless Modernizr.csstransforms3d
@@ -43,8 +42,7 @@ class window.SimplePanorama
       pano.updateSpeedTicks = 0
       window.setInterval((-> pano.updatePano()), 1)
       
-      if @noTouchDevice
-        pano.elem.mousedown -> false
+      pano.elem.mousedown (event) -> event.preventDefault()
       pano.elem.attr("oncontextmenu", "return false;")
       
       $.each modules, (i, moduleId) ->
@@ -97,7 +95,7 @@ class window.SimplePanorama
     @populateTripleBuffer(hs)
   
   prepareHotspot: (content, cssClass, x, y, w, h) ->
-    if @noTouchDevice
+    unless Modernizr.touch
       cssClass += " noTouchDevice"
     @subElem.append('<div class="sp-number-' + ++@hsCounter + ' sp-hotspot ' + cssClass + '"><div class="sp-hotspot-content">' + content + '</div></div>')
     result = $(".sp-hotspot.sp-number-" + @hsCounter)
@@ -127,7 +125,7 @@ class window.SimplePanorama
     c1.appendTo(@subElem)
     c2.appendTo(@subElem)
     
-    if @noTouchDevice
+    unless Modernizr.touch
       @animateChildren(elem)
       @animateChildren(c1)
       @animateChildren(c2)
