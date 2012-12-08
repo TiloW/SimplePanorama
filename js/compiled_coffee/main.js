@@ -104,9 +104,8 @@
 
     SimplePanorama.prototype.createCircleHotspot = function(content, x, y, r) {
       var hs;
-      hs = this.prepareHotspot(content, "sp-circ", x - r, y - r, r, r);
+      hs = this.prepareHotspot(content, "sp-circ", x - r, y - r, r * 2, r * 2);
       hs.css("border-radius", r + "px");
-      $(hs.children('div')[0]).css("padding", r / 4 + "px");
       return this.populateTripleBuffer(hs);
     };
 
@@ -121,7 +120,7 @@
       if (this.noTouchDevice) {
         cssClass += " noTouchDevice";
       }
-      this.subElem.append('<div class="sp-number-' + ++this.hsCounter + ' sp-hotspot ' + cssClass + '"><div>' + content + '<div></div>');
+      this.subElem.append('<div class="sp-number-' + ++this.hsCounter + ' sp-hotspot ' + cssClass + '"><div class="sp-hotspot-content">' + content + '</div></div>');
       result = $(".sp-hotspot.sp-number-" + this.hsCounter);
       result.css("left", x + "px");
       result.css("top", y + "px");

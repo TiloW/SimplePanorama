@@ -87,9 +87,8 @@ class window.SimplePanorama
     @subElem.css("transform", transform)
   
   createCircleHotspot: (content, x, y, r) ->
-    hs = @prepareHotspot(content, "sp-circ", x-r, y-r, r, r)
+    hs = @prepareHotspot(content, "sp-circ", x-r, y-r, r*2, r*2)
     hs.css("border-radius", r + "px")
-    $(hs.children('div')[0]).css("padding", r/4 + "px")
     @populateTripleBuffer(hs)
   
   createRectHotspot: (content, x, y, w, h) ->
@@ -99,7 +98,7 @@ class window.SimplePanorama
   prepareHotspot: (content, cssClass, x, y, w, h) ->
     if @noTouchDevice
       cssClass += " noTouchDevice"
-    @subElem.append('<div class="sp-number-' + ++@hsCounter + ' sp-hotspot ' + cssClass + '"><div>' + content + '<div></div>')
+    @subElem.append('<div class="sp-number-' + ++@hsCounter + ' sp-hotspot ' + cssClass + '"><div class="sp-hotspot-content">' + content + '</div></div>')
     result = $(".sp-hotspot.sp-number-" + @hsCounter)
     
     result.css("left", x + "px")
