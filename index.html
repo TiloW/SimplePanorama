@@ -69,14 +69,14 @@
   </style>
   <script>
     $(function() {
-      pano = new SimplePanorama(
-        $('#panoContainer'),
-        'http://www.panorama-cities.net/osnabrueck/panoramas/schlosspark_5.jpg',
-        function() {
+      pano = new SimplePanorama({
+        'selector':  '#panoContainer',
+        'imagePath': 'http://www.panorama-cities.net/osnabrueck/panoramas/schlosspark_5.jpg',
+        'modules': ['move_mousedown', 'move_touch'],
+        'callback':  function() {
           pano.createRectHotspot('<p><a href="http://en.wikipedia.org/wiki/Water">Water</a> Spring</p>', 260, 250, 300, 170);
-        },
-        ['move_mousedown', 'move_touch']
-      );
+        }
+      });
       pano.targetSpeed = .05
     });
   </script>
