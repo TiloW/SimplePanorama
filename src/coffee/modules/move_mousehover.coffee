@@ -1,4 +1,4 @@
-simplePanorama.modules.move_mousehover = -> (pano) ->
+SimplePanorama.modules.move_mousehover = -> (pano) ->
   pano.elem.on 'mousemove', (event) ->
     pano.targetSpeed = 2 - (event.pageX - pano.elem.position().left) / pano.elem.width()*4
     

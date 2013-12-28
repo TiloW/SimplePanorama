@@ -1,4 +1,4 @@
-simplePanorama.modules.show_coordinates = (pano) ->
+SimplePanorama.modules.show_coordinates = (pano) ->
   # down = false
   box = $('<div class="scInfoBox"><p></p><p></p><p></p></div>')
   cursor = {}

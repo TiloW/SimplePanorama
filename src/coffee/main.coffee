@@ -1,4 +1,5 @@
 class window.SimplePanorama
+  @modules: {}
 
   constructor: (options) ->
     @maxPos = 0
@@ -65,7 +66,7 @@ class window.SimplePanorama
       if options.modules
         $.each options.modules, (i, moduleId) ->
           pano.moduleData[moduleId] = {}
-          simplePanorama.modules[moduleId](pano, pano.moduleData[moduleId])
+          SimplePanorama.modules[moduleId](pano, pano.moduleData[moduleId])
       
       wrapperElem.html pano.elem
       $(window).trigger("resize")

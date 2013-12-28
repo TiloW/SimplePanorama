@@ -1,4 +1,4 @@
-simplePanorama.modules.move_mousedown = (pano, data) ->
+SimplePanorama.modules.move_mousedown = (pano, data) ->
   pano.elem.on 'mousedown', (event) ->
     if event.which is 1
       data.mouseStart = event.pageX

@@ -1,4 +1,4 @@
-simplePanorama.modules.move_touch = (pano, data) ->
+SimplePanorama.modules.move_touch = (pano, data) ->
   
   pano.elem.on "touchstart", (event) ->
     pano.setSpeed 0.000001
