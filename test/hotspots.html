@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset=utf-8 />
+  <meta name="viewport" content="height=device-height">
+  <title>Basic SimplePanorama Demo</title>
+  <link rel="stylesheet" href="public/simple-panorama.css" />
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <script src="modernizr.js"></script>
+  <script src="public/simple-panorama.js"></script>
+  <style>
+    /* styling your hotspots (just to demonstrate ...yes it looks ugly) */
+    .sp-hotspot {
+      font-size: 1.5em;
+      color: red;
+      font-weight: bold;
+      border-color: #FFF;
+      border-width: 2px;
+      text-align: center;
+    }
+  </style>
+  <script>
+    $(function() {
+      // initialize your panorama
+      pano = new SimplePanorama({
+        'elem':     $('#myPanoContainer'), // your panorama wrapper
+        'imagePath':  'http://www.panorama-cities.net/osnabrueck/panoramas/schlosspark_5.jpg', // image to use
+        'callback': function() { // executed after panorama finished loading
+          // create your hotspots
+          
+          // coordinates: center x, center y, radius
+          this.createCircleHotspot('<p>Hello World!<br />I\'m a <a href="http://de.wikipedia.org/wiki/Circle">circle</a>.</p>', 300, 250, 200);
+          
+          // coordinates: left x, top y, width, height
+          this.createRectHotspot('<p>Hello World!<br />I\'m a rectangle.</p>', 750, 150, 200, 200);
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  <div id="myPanoContainer"></div>
+</body>
+</html>

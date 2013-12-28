@@ -1,0 +1,14 @@
+{
+  "name": "simple-panorama",
+  "version": "1.0.0",
+  "author": "Tilo Wiedera <tilo@wiedera.de>",
+  "devDependencies": {
+    "grunt": "0.4.x",
+    "coffee-script": "1.6.x",
+    "grunt-contrib": "0.8.x"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.10"
+  }
+}
