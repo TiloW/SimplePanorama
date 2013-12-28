@@ -6,9 +6,9 @@ SimplePanorama.modules.move_touch = (pano, data) ->
 
   $("*").on "touchmove", (event) ->
     unless data.touchStart is undefined
-      pano.targetSpeed = (data.touchStart - event.originalEvent.touches[0].pageX) / 200
+      pano.doTargetSpeed((data.touchStart - event.originalEvent.touches[0].pageX) / 200)
   
   $("*").on "touchend", ->
     unless data.touchStart is undefined
-      pano.targetSpeed = 0
+      pano.doTargetSpeed 0
       data.touchStart = undefined

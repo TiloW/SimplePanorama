@@ -7,10 +7,10 @@ SimplePanorama.modules.move_mousedown = (pano, data) ->
   
   $("*").on 'mousemove', (event) ->
     unless data.mouseStart is undefined
-      pano.targetSpeed = (data.mouseStart - event.pageX) / $(window).width()*3
+      pano.doTargetSpeed((data.mouseStart - event.pageX) / $(window).width()*3)
   
   $("*").on 'mouseup', (event) ->
     if data.mouseStart isnt undefined and event.which is 1
-      pano.targetSpeed = 0
+      pano.doTargetSpeed 0
       pano.elem.css("cursor", "auto")
       data.mouseStart = undefined

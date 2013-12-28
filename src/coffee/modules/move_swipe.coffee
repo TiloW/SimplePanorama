@@ -3,7 +3,7 @@ SimplePanorama.modules.move_swipe = (pano, data) ->
   pano.elem.on "touchstart", (event) ->
     pano.setSpeed 0.000001
     data.touchStart = event.originalEvent.touches[0].pageX
-    pano.targetSpeed = 0
+    pano.doTargetSpeed 0
 
   $("*").on "touchmove", (event) ->
     unless data.touchStart is undefined

@@ -2,19 +2,23 @@ class window.SimplePanorama
   @modules: {}  # stores all modules available for each SimplePanorama instance
 
   constructor: (options) ->
-    @maxPos = 0         # the maximum valid x-position
-    @width = 0          # the width of the view
-    @elem = null        # the main DOM element, wrapped by jQuery
-    @img = null         # the image element
-    @subElem = null     # holds the buffered images
-    @pos = 0.0          # current x-position of the panorama
-    @targetSpeed = 0    # currently targeted x-speed
-    @speed = 0          # current x-speed
-    @hsCounter = 0      # counts the hotspots for this instance
-    @isRepeative = null # whether one is able to scroll infinitly
-    @moduleData = {}    # holds data for all enabled modules for this instance
-    @hotspots = {}      # holds all hotspots for this panorama
-    
+    @maxPos = {x:0,y:0}      # the maximum valid position
+    @size = {x:0,y:0}        # the size of the view
+    @elem = null             # the main DOM element, wrapped by jQuery
+    @img = null              # the image element
+    @subElem = null          # holds the buffered images
+    @pos = {x:0.0,y:0.0}     # current position of the panorama
+    @targetSpeed = {x:0,y:0} # currently targeted speed
+    @speed = {x:0,y:0}       # current speed
+    @hsCounter = 0           # counts the hotspots for this instance
+    @isRepeative = null      # whether one is able to scroll infinitly
+    @moduleData = {}         # holds data for all enabled modules for this instance
+    @hotspots = {}           # holds all hotspots for this panorama
+    @offset = 0              # x-offset
+    @speedOverride =         # used to set speed to fixed value
+      x: false
+      y: false
+
     wrapperElem = options.elem
     if (not wrapperElem) and options.selector
       wrapperElem = $(options.selector)
@@ -30,8 +34,7 @@ class window.SimplePanorama
       return null
       
     if options.initialPos
-      @pos = wrapperElem.innerWidth()/2 -options.initialPos
-      # @pos = -options.initialPos
+      @pos.x = wrapperElem.innerWidth()/2 -options.initialPos
      
     @isRepeative =  if options.repeative is undefined then true else options.repeative
   
@@ -73,23 +76,42 @@ class window.SimplePanorama
       $(pano).trigger('loaded')
   
     $(window).resize ->
-      pano.width = if pano.img.width < pano.elem.width() then pano.img.width else pano.elem.parent().innerWidth()
+      pano.size.x = if pano.img.width < pano.elem.width() then pano.img.width else pano.elem.parent().innerWidth()
       pano.elem.css("width", pano.width + "px")
     
-      pano.maxPos = if pano.isRepeative then pano.img.width else pano.img.width - pano.width
+      pano.maxPos.x = if pano.isRepeative then pano.img.width else pano.img.width - pano.size.x
       
     @img.src = imgFile
   
-  updateSpeed: ->    
-    if @speedOverride
-      @speed = @speedOverride
-      @speedOverride = false
+  updateSpeed: ->
+    if @speedOverride.x
+      @speed.x = @speedOverride.x
+      @speedOverride.x = false
     else
-      @speed = (1.8*@speed + 0.2*@targetSpeed)/2
+      @speed.x = (1.8*@speed.x + 0.2*@targetSpeed.x)/2
       
-  setSpeed: (speed) ->
-    @speedOverride = speed
-  
+    if @speedOverride.y
+      @speed.x = @speedOverride.y
+      @speedOverride.y = false
+    else
+      @speed.y = (1.8*@speed.y + 0.2*@targetSpeed.y)/2
+      
+  setSpeed: (x, y = 0) ->
+    @speedOverride.x = x
+    @speedOverride.y = y
+      
+  doTargetSpeed: (x, y = 0) ->
+    @targetSpeed.x = x
+    @targetSpeed.y = y
+    
+  boundCoordinate: (value, max) ->
+    if value > 0
+      0
+    else if value < -max
+      -max
+    else
+      value
+    
   updatePano: ->
     ticks = new Date().getTime()
     passedTicks = ticks - @lastTick
@@ -101,20 +123,20 @@ class window.SimplePanorama
       @updateSpeedTicks = 0
     
     unless @subElem is null
-      newPos = @pos + @speed*passedTicks
+      newPosX = @pos.x + @speed.x*passedTicks
+      newPosY = @pos.y + @speed.y*passedTicks
 
       if @isRepeative
-        newPos = newPos % @maxPos
+        newPosX = newPosX % @maxPos.x
       else
-        if newPos > 0
-          newPos = 0
-        else if newPos < -@maxPos
-          newPos = -@maxPos
+        newPosX = @boundCoordinate(newPosX, @maxPos.x)
+      newPosY = @boundCoordinate(newPosY, @maxPos.y)
 
-      @pos = newPos
+      @pos.x = newPosX
+      @pos.y = newPosY
         
       if Modernizr.csstransforms3d and navigator.userAgent.indexOf('Safari') < 0
-        transform = "translate3D(" +  @pos + "px, 0, 0)"
+        transform = "translate3D(" +  @pos.x + "px, 0, 0)"
         @subElem.css
           "-o-transform": transform
           "-webkit-transform": transform
@@ -122,7 +144,7 @@ class window.SimplePanorama
           "-ms-transform": transform
           "transform": transform
       else
-        @subElem.css("left", @pos + "px")
+        @subElem.css("left", @pos.x-@offset + "px")
   
   createCircleHotspot: (content, x, y, r, category) ->
     hs = @prepareHotspot(content, "sp-circ", x-r, y-r, r*2, r*2)
@@ -150,7 +172,7 @@ class window.SimplePanorama
     left = @elem.offset().left
     top = @elem.offset().top
     result = new Object()
-    result.x = Math.floor(pageX - left + @img.width - @pos)
+    result.x = Math.floor(pageX - left + @img.width - @pos.x)
     result.x %= @img.width
     result.y = Math.floor(pageY - top)
     if result.y < 0

@@ -4,18 +4,38 @@
 
     function SimplePanorama(options) {
       var imgFile, pano, wrapperElem;
-      this.maxPos = 0;
-      this.width = 0;
+      this.maxPos = {
+        x: 0,
+        y: 0
+      };
+      this.size = {
+        x: 0,
+        y: 0
+      };
       this.elem = null;
       this.img = null;
       this.subElem = null;
-      this.pos = 0.0;
-      this.targetSpeed = 0;
-      this.speed = 0;
+      this.pos = {
+        x: 0.0,
+        y: 0.0
+      };
+      this.targetSpeed = {
+        x: 0,
+        y: 0
+      };
+      this.speed = {
+        x: 0,
+        y: 0
+      };
       this.hsCounter = 0;
       this.isRepeative = null;
       this.moduleData = {};
       this.hotspots = {};
+      this.offset = 0;
+      this.speedOverride = {
+        x: false,
+        y: false
+      };
       wrapperElem = options.elem;
       if ((!wrapperElem) && options.selector) {
         wrapperElem = $(options.selector);
@@ -31,7 +51,7 @@
         return null;
       }
       if (options.initialPos) {
-        this.pos = wrapperElem.innerWidth() / 2 - options.initialPos;
+        this.pos.x = wrapperElem.innerWidth() / 2 - options.initialPos;
       }
       this.isRepeative = options.repeative === void 0 ? true : options.repeative;
       this.img = new Image;
@@ -77,28 +97,56 @@
         return $(pano).trigger('loaded');
       };
       $(window).resize(function() {
-        pano.width = pano.img.width < pano.elem.width() ? pano.img.width : pano.elem.parent().innerWidth();
+        pano.size.x = pano.img.width < pano.elem.width() ? pano.img.width : pano.elem.parent().innerWidth();
         pano.elem.css("width", pano.width + "px");
-        return pano.maxPos = pano.isRepeative ? pano.img.width : pano.img.width - pano.width;
+        return pano.maxPos.x = pano.isRepeative ? pano.img.width : pano.img.width - pano.size.x;
       });
       this.img.src = imgFile;
     }
 
     SimplePanorama.prototype.updateSpeed = function() {
-      if (this.speedOverride) {
-        this.speed = this.speedOverride;
-        return this.speedOverride = false;
+      if (this.speedOverride.x) {
+        this.speed.x = this.speedOverride.x;
+        this.speedOverride.x = false;
       } else {
-        return this.speed = (1.8 * this.speed + 0.2 * this.targetSpeed) / 2;
+        this.speed.x = (1.8 * this.speed.x + 0.2 * this.targetSpeed.x) / 2;
+      }
+      if (this.speedOverride.y) {
+        this.speed.x = this.speedOverride.y;
+        return this.speedOverride.y = false;
+      } else {
+        return this.speed.y = (1.8 * this.speed.y + 0.2 * this.targetSpeed.y) / 2;
       }
     };
 
-    SimplePanorama.prototype.setSpeed = function(speed) {
-      return this.speedOverride = speed;
+    SimplePanorama.prototype.setSpeed = function(x, y) {
+      if (y == null) {
+        y = 0;
+      }
+      this.speedOverride.x = x;
+      return this.speedOverride.y = y;
+    };
+
+    SimplePanorama.prototype.doTargetSpeed = function(x, y) {
+      if (y == null) {
+        y = 0;
+      }
+      this.targetSpeed.x = x;
+      return this.targetSpeed.y = y;
+    };
+
+    SimplePanorama.prototype.boundCoordinate = function(value, max) {
+      if (value > 0) {
+        return 0;
+      } else if (value < -max) {
+        return -max;
+      } else {
+        return value;
+      }
     };
 
     SimplePanorama.prototype.updatePano = function() {
-      var newPos, passedTicks, ticks, transform;
+      var newPosX, newPosY, passedTicks, ticks, transform;
       ticks = new Date().getTime();
       passedTicks = ticks - this.lastTick;
       this.lastTick = ticks;
@@ -108,19 +156,18 @@
         this.updateSpeedTicks = 0;
       }
       if (this.subElem !== null) {
-        newPos = this.pos + this.speed * passedTicks;
+        newPosX = this.pos.x + this.speed.x * passedTicks;
+        newPosY = this.pos.y + this.speed.y * passedTicks;
         if (this.isRepeative) {
-          newPos = newPos % this.maxPos;
+          newPosX = newPosX % this.maxPos.x;
         } else {
-          if (newPos > 0) {
-            newPos = 0;
-          } else if (newPos < -this.maxPos) {
-            newPos = -this.maxPos;
-          }
+          newPosX = this.boundCoordinate(newPosX, this.maxPos.x);
         }
-        this.pos = newPos;
+        newPosY = this.boundCoordinate(newPosY, this.maxPos.y);
+        this.pos.x = newPosX;
+        this.pos.y = newPosY;
         if (Modernizr.csstransforms3d && navigator.userAgent.indexOf('Safari') < 0) {
-          transform = "translate3D(" + this.pos + "px, 0, 0)";
+          transform = "translate3D(" + this.pos.x + "px, 0, 0)";
           return this.subElem.css({
             "-o-transform": transform,
             "-webkit-transform": transform,
@@ -129,7 +176,7 @@
             "transform": transform
           });
         } else {
-          return this.subElem.css("left", this.pos + "px");
+          return this.subElem.css("left", this.pos.x - this.offset + "px");
         }
       }
     };
@@ -166,7 +213,7 @@
       left = this.elem.offset().left;
       top = this.elem.offset().top;
       result = new Object();
-      result.x = Math.floor(pageX - left + this.img.width - this.pos);
+      result.x = Math.floor(pageX - left + this.img.width - this.pos.x);
       result.x %= this.img.width;
       result.y = Math.floor(pageY - top);
       if (result.y < 0) {
@@ -246,12 +293,12 @@
     });
     $("*").on('mousemove', function(event) {
       if (data.mouseStart !== void 0) {
-        return pano.targetSpeed = (data.mouseStart - event.pageX) / $(window).width() * 3;
+        return pano.doTargetSpeed((data.mouseStart - event.pageX) / $(window).width() * 3);
       }
     });
     return $("*").on('mouseup', function(event) {
       if (data.mouseStart !== void 0 && event.which === 1) {
-        pano.targetSpeed = 0;
+        pano.doTargetSpeed(0);
         pano.elem.css("cursor", "auto");
         return data.mouseStart = void 0;
       }
@@ -265,10 +312,10 @@
     return function(pano) {
       return pano.elem.on('mousemove', function(event) {
         var setZero;
-        pano.targetSpeed = 2 - (event.pageX - pano.elem.position().left) / pano.elem.width() * 4;
-        setZero = pano.targetSpeed > 0 ? pano.targetSpeed < 1 : pano.targetSpeed > -1;
+        pano.doTargetSpeed(2 - (event.pageX - pano.elem.position().left) / pano.elem.width() * 4);
+        setZero = pano.targetSpeed.x > 0 ? pano.targetSpeed.x < 1 : pano.targetSpeed.x > -1;
         if (setZero) {
-          return pano.targetSpeed = 0;
+          return pano.doTargetSpeed(0);
         }
       });
     };
@@ -281,7 +328,7 @@
     pano.elem.on("touchstart", function(event) {
       pano.setSpeed(0.000001);
       data.touchStart = event.originalEvent.touches[0].pageX;
-      return pano.targetSpeed = 0;
+      return pano.doTargetSpeed(0);
     });
     $("*").on("touchmove", function(event) {
       var speed, tmp;
@@ -312,12 +359,12 @@
     });
     $("*").on("touchmove", function(event) {
       if (data.touchStart !== void 0) {
-        return pano.targetSpeed = (data.touchStart - event.originalEvent.touches[0].pageX) / 200;
+        return pano.doTargetSpeed((data.touchStart - event.originalEvent.touches[0].pageX) / 200);
       }
     });
     return $("*").on("touchend", function() {
       if (data.touchStart !== void 0) {
-        pano.targetSpeed = 0;
+        pano.doTargetSpeed(0);
         return data.touchStart = void 0;
       }
     });
