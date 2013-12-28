@@ -8,7 +8,7 @@ simplePanorama.modules.move_swipe = (pano, data) ->
   $("*").on "touchmove", (event) ->
     unless data.touchStart is undefined
       tmp = event.originalEvent.changedTouches[0].pageX
-      speed = (data.touchStart - tmp) / 100
+      speed = (tmp - data.touchStart) / 100
       console.log $(window).width()
       if Math.abs(speed) > Math.abs(pano.speed)
         pano.setSpeed(speed)
