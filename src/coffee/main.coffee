@@ -63,7 +63,6 @@ class window.SimplePanorama
       pano.updateSpeedTicks = 0
       window.setInterval((-> pano.updatePano()), 1)
       
-      pano.elem.on 'touchstart', (event) -> event.preventDefault()
       pano.elem.mousedown (event) -> event.preventDefault()
       pano.elem.attr("oncontextmenu", "return false;")
       

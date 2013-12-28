@@ -78,13 +78,6 @@
         window.setInterval((function() {
           return pano.updatePano();
         }), 1);
-        pano.elem.on('touchstart', function(event) {
-          return event.preventDefault();
-        });
-        pano.elem.mousedown(function(event) {
-          return event.preventDefault();
-        });
-        pano.elem.attr("oncontextmenu", "return false;");
         if (options.modules) {
           $.each(options.modules, function(i, moduleId) {
             pano.moduleData[moduleId] = {};
