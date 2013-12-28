@@ -119,7 +119,7 @@ class window.SimplePanorama
 
       @pos = newPos
         
-      if Modernizr.csstransforms3d
+      if Modernizr.csstransforms3d and navigator.userAgent.indexOf('Safari') < 0
         transform = "translate3D(" +  @pos + "px, 0, 0)"
         @subElem.css
           "-o-transform": transform

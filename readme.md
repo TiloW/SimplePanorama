@@ -1,4 +1,4 @@
-# SimplePanorama
+﻿# SimplePanorama
 
 [Here](http://tilow.github.com/SimplePanorama/) you can take a look at the script in action.
 SimplePanorama is available under the [MIT License](https://github.com/TiloW/SimplePanorama/blob/master/LICENSE).
@@ -16,7 +16,9 @@ SimplePanorama requires JQuery, it has so far only been tested with version 1.8.
 
 ## Setup
 
-You need to include [JQuery](http://jquery.com/download/), [Modernizr](https://github.com/TiloW/SimplePanorama/blob/master/test/modernizr.js) (with touch-event detection enabled), [simple-panorama.css](https://github.com/TiloW/SimplePanorama/blob/master/public/simple-panorama.css) and [simple-panorama.js](https://github.com/TiloW/SimplePanorama/blob/master/public/simple-panorama.js).
+You need to include [JQuery](http://jquery.com/download/), 
+[Modernizr](https://github.com/TiloW/SimplePanorama/blob/master/test/modernizr.js) (with touch-event and 3D-transform detection enabled), 
+[simple-panorama.css](https://github.com/TiloW/SimplePanorama/blob/master/public/simple-panorama.css) and [simple-panorama.js](https://github.com/TiloW/SimplePanorama/blob/master/public/simple-panorama.js).
 
 ## Usage
 
