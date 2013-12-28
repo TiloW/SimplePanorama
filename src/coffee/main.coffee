@@ -1,9 +1,3 @@
-###
-  @depends bootstrap.js
-  @depends ../vendor/modernizr.js
-  @depends modules.js
-###
-
 class window.SimplePanorama
 
   constructor: (options) ->
@@ -37,7 +31,8 @@ class window.SimplePanorama
       return null
       
     if options.initialPos
-      @pos = -options.initialPos
+      @pos = wrapperElem.innerWidth()/2 -options.initialPos
+      # @pos = -options.initialPos
      
     @isRepeative =  if options.repeative is undefined then true else options.repeative
   
