@@ -1,21 +1,19 @@
 class window.SimplePanorama
-  @modules: {}
+  @modules: {}  # stores all modules available for each SimplePanorama instance
 
   constructor: (options) ->
-    @maxPos = 0
-    @width = 0
-    @elem = null
-    @img = null
-    @subElem = null
-    @pos = 0.0
-    @targetSpeed = 0
-    @speed = 0
-    @counter = 0
-    @hsCounter = 0
-    @isRepeative = null
-    @moduleData = {}
-    @offset = 0
-    @hotspots = {}
+    @maxPos = 0         # the maximum valid x-position
+    @width = 0          # the width of the view
+    @elem = null        # the main DOM element, wrapped by jQuery
+    @img = null         # the image element
+    @subElem = null     # holds the buffered images
+    @pos = 0.0          # current x-position of the panorama
+    @targetSpeed = 0    # currently targeted x-speed
+    @speed = 0          # current x-speed
+    @hsCounter = 0      # counts the hotspots for this instance
+    @isRepeative = null # whether one is able to scroll infinitly
+    @moduleData = {}    # holds data for all enabled modules for this instance
+    @hotspots = {}      # holds all hotspots for this panorama
     
     wrapperElem = options.elem
     if (not wrapperElem) and options.selector
@@ -124,7 +122,7 @@ class window.SimplePanorama
           "-ms-transform": transform
           "transform": transform
       else
-        @subElem.css("left", @pos-@offset + "px")
+        @subElem.css("left", @pos + "px")
   
   createCircleHotspot: (content, x, y, r, category) ->
     hs = @prepareHotspot(content, "sp-circ", x-r, y-r, r*2, r*2)

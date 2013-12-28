@@ -12,11 +12,9 @@
       this.pos = 0.0;
       this.targetSpeed = 0;
       this.speed = 0;
-      this.counter = 0;
       this.hsCounter = 0;
       this.isRepeative = null;
       this.moduleData = {};
-      this.offset = 0;
       this.hotspots = {};
       wrapperElem = options.elem;
       if ((!wrapperElem) && options.selector) {
@@ -131,7 +129,7 @@
             "transform": transform
           });
         } else {
-          return this.subElem.css("left", this.pos - this.offset + "px");
+          return this.subElem.css("left", this.pos + "px");
         }
       }
     };
