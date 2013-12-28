@@ -9,16 +9,30 @@
   <script src="modernizr.js"></script>
   <script src="public/simple-panorama.js"></script>
   <script>
+    $(window).on('resize', function() {
+      $('#myPanoContainer').css({
+      	height: $(window).innerHeight(),
+      	width: $(window).innerWidth()
+      });
+    });
+    
     $(function() {
+      $(window).trigger('resize');
       // initialize your panorama
       pano = new SimplePanorama({
         'selector': '#myPanoContainer', // your panorama wrapper
-        'imagePath': 'http://www.panorama-cities.net/osnabrueck/panoramas/schlosspark_5.jpg', // image to use:
+        'imagePath': 'http://www.panorama-cities.net/osnabrueck/panoramas/marktplatz_8.jpg', // image to use:
         'repeative': false,
         'modules': ['move_mousedown', 'move_swipe'] // activate modules for this panorama 
       });                                           // Enables the user to move the panorama around with mouse and touchdevice
     });
   </script>
+  <style>
+  	html, body {
+  		padding: 0;
+  		margin: 0;
+  	}
+  </style>
 </head>
 <body>
   <div id="myPanoContainer"></div>
