@@ -2,9 +2,7 @@ class window.SimplePanorama
   @modules: {}  # stores all modules available for each SimplePanorama instance
   # whether to use css 3d transformations,
   # 3d transform is gpu-accellerated but produces artifacts in safari
-  @use3DTransform: Modernizr.csstransforms3d 
-                     and (navigator.userAgent.indexOf('Safari') < 0 
-                            or navigator.userAgent.indexOf('Chrome') > -1)
+  @use3DTransform: Modernizr.csstransforms3d and (navigator.userAgent.indexOf('Safari') < 0 or navigator.userAgent.indexOf('Chrome') > -1)
 
   constructor: (options) ->
     @maxPos = {x:0,y:0}      # the maximum valid position
@@ -88,7 +86,7 @@ class window.SimplePanorama
       pano.maxPos.x = if pano.isRepeative then pano.img.width else pano.img.width - pano.size.x
       pano.maxPos.y = pano.img.height - pano.size.y
       
-    @img.src = imgFile
+    @img.src = imgFile    
   
   updateSpeed: ->
     if @speedOverride.x
@@ -98,14 +96,16 @@ class window.SimplePanorama
       @speed.x = (1.8*@speed.x + 0.2*@targetSpeed.x)/2
       
     if @speedOverride.y
-      @speed.x = @speedOverride.y
+      @speed.y = @speedOverride.y
       @speedOverride.y = false
     else
       @speed.y = (1.8*@speed.y + 0.2*@targetSpeed.y)/2
       
-  setSpeed: (x, y = 0) ->
-    @speedOverride.x = x
-    @speedOverride.y = y
+  setSpeedX: (speed) ->
+    @speedOverride.x = speed
+    
+  setSpeedY: (speed) ->
+    @speedOverride.y = speed
       
   doTargetSpeed: (x, y = 0) ->
     @targetSpeed.x = x
@@ -120,7 +120,6 @@ class window.SimplePanorama
       value
     
   updatePano: ->
-    @speed.y = -1
     ticks = new Date().getTime()
     passedTicks = ticks - @lastTick
     @lastTick = ticks
@@ -133,17 +132,12 @@ class window.SimplePanorama
     unless @subElem is null
       newPosX = @pos.x + @speed.x*passedTicks
       newPosY = @pos.y + @speed.y*passedTicks
-
-      if @isRepeative
-        newPosX = newPosX % @maxPos.x
-      else
-        newPosX = @boundCoordinate(newPosX, @maxPos.x)
-
-      @pos.x = newPosX
+      
+      @pos.x = if @isRepeative then newPosX % @maxPos.x else @boundCoordinate(newPosX, @maxPos.x)
       @pos.y = @boundCoordinate(newPosY, @maxPos.y)
-        
+
       if SimplePanorama.use3DTransform
-        transform = "translate3D({@pos.x}px, {@pos.y}px, 0)"
+        transform = "translate3D(#{@pos.x}px, #{@pos.y}px, 0)"
         @subElem.css
           "-o-transform": transform
           "-webkit-transform": transform

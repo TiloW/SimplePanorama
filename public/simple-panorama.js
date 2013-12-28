@@ -116,19 +116,19 @@
         this.speed.x = (1.8 * this.speed.x + 0.2 * this.targetSpeed.x) / 2;
       }
       if (this.speedOverride.y) {
-        this.speed.x = this.speedOverride.y;
+        this.speed.y = this.speedOverride.y;
         return this.speedOverride.y = false;
       } else {
         return this.speed.y = (1.8 * this.speed.y + 0.2 * this.targetSpeed.y) / 2;
       }
     };
 
-    SimplePanorama.prototype.setSpeed = function(x, y) {
-      if (y == null) {
-        y = 0;
-      }
-      this.speedOverride.x = x;
-      return this.speedOverride.y = y;
+    SimplePanorama.prototype.setSpeedX = function(speed) {
+      return this.speedOverride.x = speed;
+    };
+
+    SimplePanorama.prototype.setSpeedY = function(speed) {
+      return this.speedOverride.y = speed;
     };
 
     SimplePanorama.prototype.doTargetSpeed = function(x, y) {
@@ -151,7 +151,6 @@
 
     SimplePanorama.prototype.updatePano = function() {
       var newPosX, newPosY, passedTicks, ticks, transform;
-      this.speed.y = -1;
       ticks = new Date().getTime();
       passedTicks = ticks - this.lastTick;
       this.lastTick = ticks;
@@ -163,15 +162,10 @@
       if (this.subElem !== null) {
         newPosX = this.pos.x + this.speed.x * passedTicks;
         newPosY = this.pos.y + this.speed.y * passedTicks;
-        if (this.isRepeative) {
-          newPosX = newPosX % this.maxPos.x;
-        } else {
-          newPosX = this.boundCoordinate(newPosX, this.maxPos.x);
-        }
-        this.pos.x = newPosX;
+        this.pos.x = this.isRepeative ? newPosX % this.maxPos.x : this.boundCoordinate(newPosX, this.maxPos.x);
         this.pos.y = this.boundCoordinate(newPosY, this.maxPos.y);
         if (SimplePanorama.use3DTransform) {
-          transform = "translate3D({@pos.x}px, {@pos.y}px, 0)";
+          transform = "translate3D(" + this.pos.x + "px, " + this.pos.y + "px, 0)";
           return this.subElem.css({
             "-o-transform": transform,
             "-webkit-transform": transform,
@@ -291,14 +285,17 @@
   SimplePanorama.modules.move_mousedown = function(pano, data) {
     pano.elem.on('mousedown', function(event) {
       if (event.which === 1) {
-        data.mouseStart = event.pageX;
+        data.mouseStart = {
+          x: event.pageX,
+          y: event.pageY
+        };
         pano.elem.css("cursor", "move");
         return event.preventDefault();
       }
     });
     $("*").on('mousemove', function(event) {
       if (data.mouseStart !== void 0) {
-        return pano.doTargetSpeed((data.mouseStart - event.pageX) / $(window).width() * 3);
+        return pano.doTargetSpeed((data.mouseStart.x - event.pageX) / $(window).width() * 3, (data.mouseStart.y - event.pageY) / $(window).height() * 3);
       }
     });
     return $("*").on('mouseup', function(event) {
@@ -331,18 +328,28 @@
 (function() {
   SimplePanorama.modules.move_swipe = function(pano, data) {
     pano.elem.on("touchstart", function(event) {
-      pano.setSpeed(0.000001);
-      data.touchStart = event.originalEvent.touches[0].pageX;
-      return pano.doTargetSpeed(0);
+      data.touchStart = {
+        x: event.originalEvent.touches[0].pageX,
+        y: event.originalEvent.touches[0].pageY
+      };
+      return pano.doTargetSpeed(0, 0);
     });
     $("*").on("touchmove", function(event) {
       var speed, tmp;
       if (data.touchStart !== void 0) {
-        tmp = event.originalEvent.changedTouches[0].pageX;
-        speed = (tmp - data.touchStart) / 100;
-        console.log($(window).width());
-        if (Math.abs(speed) > Math.abs(pano.speed)) {
-          pano.setSpeed(speed);
+        tmp = {
+          x: event.originalEvent.changedTouches[0].pageX,
+          y: event.originalEvent.changedTouches[0].pageY
+        };
+        speed = {
+          x: (tmp.x - data.touchStart.x) / 100,
+          y: (tmp.y - data.touchStart.y) / 100
+        };
+        if (Math.abs(speed.x) > Math.abs(pano.speed.x)) {
+          pano.setSpeedX(speed.x);
+        }
+        if (Math.abs(speed.y) > Math.abs(pano.speed.y)) {
+          pano.setSpeedY(speed.y);
         }
         return data.touchStart = tmp;
       }
@@ -359,12 +366,14 @@
 (function() {
   SimplePanorama.modules.move_touch = function(pano, data) {
     pano.elem.on("touchstart", function(event) {
-      pano.setSpeed(0.000001);
-      return data.touchStart = event.originalEvent.touches[0].pageX;
+      return data.touchStart = {
+        x: event.originalEvent.touches[0].pageX,
+        y: event.originalEvent.touches[0].pageY
+      };
     });
     $("*").on("touchmove", function(event) {
       if (data.touchStart !== void 0) {
-        return pano.doTargetSpeed((data.touchStart - event.originalEvent.touches[0].pageX) / 200);
+        return pano.doTargetSpeed((data.touchStart.x - event.originalEvent.touches[0].pageX) / 200, (data.touchStart.y - event.originalEvent.touches[0].pageY) / 200);
       }
     });
     return $("*").on("touchend", function() {
