@@ -1,5 +1,10 @@
 class window.SimplePanorama
   @modules: {}  # stores all modules available for each SimplePanorama instance
+  # whether to use css 3d transformations,
+  # 3d transform is gpu-accellerated but produces artifacts in safari
+  @use3DTransform: Modernizr.csstransforms3d 
+                     and (navigator.userAgent.indexOf('Safari') < 0 
+                            or navigator.userAgent.indexOf('Chrome') > -1)
 
   constructor: (options) ->
     @maxPos = {x:0,y:0}      # the maximum valid position
@@ -14,7 +19,7 @@ class window.SimplePanorama
     @isRepeative = null      # whether one is able to scroll infinitly
     @moduleData = {}         # holds data for all enabled modules for this instance
     @hotspots = {}           # holds all hotspots for this panorama
-    @offset = 0              # x-offset
+    @offset = 0              # x-offset used only for repeative panoramas
     @speedOverride =         # used to set speed to fixed value
       x: false
       y: false
@@ -77,9 +82,11 @@ class window.SimplePanorama
   
     $(window).resize ->
       pano.size.x = if pano.img.width < pano.elem.width() then pano.img.width else pano.elem.parent().innerWidth()
+      pano.size.y = if pano.img.height < pano.elem.height() then pano.img.height else pano.elem.parent().innerHeight()
       pano.elem.css("width", pano.width + "px")
     
       pano.maxPos.x = if pano.isRepeative then pano.img.width else pano.img.width - pano.size.x
+      pano.maxPos.y = pano.img.height - pano.size.y
       
     @img.src = imgFile
   
@@ -113,6 +120,7 @@ class window.SimplePanorama
       value
     
   updatePano: ->
+    @speed.y = -1
     ticks = new Date().getTime()
     passedTicks = ticks - @lastTick
     @lastTick = ticks
@@ -130,13 +138,12 @@ class window.SimplePanorama
         newPosX = newPosX % @maxPos.x
       else
         newPosX = @boundCoordinate(newPosX, @maxPos.x)
-      newPosY = @boundCoordinate(newPosY, @maxPos.y)
 
       @pos.x = newPosX
-      @pos.y = newPosY
+      @pos.y = @boundCoordinate(newPosY, @maxPos.y)
         
-      if Modernizr.csstransforms3d and navigator.userAgent.indexOf('Safari') < 0
-        transform = "translate3D(" +  @pos.x + "px, 0, 0)"
+      if SimplePanorama.use3DTransform
+        transform = "translate3D({@pos.x}px, {@pos.y}px, 0)"
         @subElem.css
           "-o-transform": transform
           "-webkit-transform": transform
@@ -145,6 +152,7 @@ class window.SimplePanorama
           "transform": transform
       else
         @subElem.css("left", @pos.x-@offset + "px")
+        @subElem.css("top", @pos.y + "px")
   
   createCircleHotspot: (content, x, y, r, category) ->
     hs = @prepareHotspot(content, "sp-circ", x-r, y-r, r*2, r*2)

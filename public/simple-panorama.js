@@ -2,6 +2,8 @@
   window.SimplePanorama = (function() {
     SimplePanorama.modules = {};
 
+    SimplePanorama.use3DTransform = Modernizr.csstransforms3d && (navigator.userAgent.indexOf('Safari') < 0 || navigator.userAgent.indexOf('Chrome') > -1);
+
     function SimplePanorama(options) {
       var imgFile, pano, wrapperElem;
       this.maxPos = {
@@ -98,8 +100,10 @@
       };
       $(window).resize(function() {
         pano.size.x = pano.img.width < pano.elem.width() ? pano.img.width : pano.elem.parent().innerWidth();
+        pano.size.y = pano.img.height < pano.elem.height() ? pano.img.height : pano.elem.parent().innerHeight();
         pano.elem.css("width", pano.width + "px");
-        return pano.maxPos.x = pano.isRepeative ? pano.img.width : pano.img.width - pano.size.x;
+        pano.maxPos.x = pano.isRepeative ? pano.img.width : pano.img.width - pano.size.x;
+        return pano.maxPos.y = pano.img.height - pano.size.y;
       });
       this.img.src = imgFile;
     }
@@ -147,6 +151,7 @@
 
     SimplePanorama.prototype.updatePano = function() {
       var newPosX, newPosY, passedTicks, ticks, transform;
+      this.speed.y = -1;
       ticks = new Date().getTime();
       passedTicks = ticks - this.lastTick;
       this.lastTick = ticks;
@@ -163,11 +168,10 @@
         } else {
           newPosX = this.boundCoordinate(newPosX, this.maxPos.x);
         }
-        newPosY = this.boundCoordinate(newPosY, this.maxPos.y);
         this.pos.x = newPosX;
-        this.pos.y = newPosY;
-        if (Modernizr.csstransforms3d && navigator.userAgent.indexOf('Safari') < 0) {
-          transform = "translate3D(" + this.pos.x + "px, 0, 0)";
+        this.pos.y = this.boundCoordinate(newPosY, this.maxPos.y);
+        if (SimplePanorama.use3DTransform) {
+          transform = "translate3D({@pos.x}px, {@pos.y}px, 0)";
           return this.subElem.css({
             "-o-transform": transform,
             "-webkit-transform": transform,
@@ -176,7 +180,8 @@
             "transform": transform
           });
         } else {
-          return this.subElem.css("left", this.pos.x - this.offset + "px");
+          this.subElem.css("left", this.pos.x - this.offset + "px");
+          return this.subElem.css("top", this.pos.y + "px");
         }
       }
     };
