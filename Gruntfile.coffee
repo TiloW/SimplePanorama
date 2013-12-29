@@ -2,13 +2,6 @@ module.exports = (grunt) ->
 
   grunt.loadNpmTasks 'grunt-contrib'
   
-  # grunt.loadNpmTasks 'grunt-contrib-coffee'
-  # grunt.loadNpmTasks 'grunt-contrib-sass'
-  # grunt.loadNpmTasks 'grunt-contrib-uglify'
-  # grunt.loadNpmTasks 'grunt-contrib-cssmin'
-  # grunt.loadNpmTasks 'grunt-contrib-copy'
-  # grunt.loadNpmTasks 'grunt-contrib-connect''
-  
   grunt.initConfig
     coffee:
       dist:
@@ -46,5 +39,5 @@ module.exports = (grunt) ->
         tasks: ['test']
 
   grunt.registerTask 'build', ['coffee', 'sass', 'uglify', 'cssmin']
-  grunt.registerTask 'test', ['build', 'copy']
-  grunt.registerTask 'default', ['connect', 'watch']
+  grunt.registerTask 'prepareServer', ['build', 'copy']
+  grunt.registerTask 'default', ['prepareServer', 'connect', 'watch']
