@@ -1,9 +1,22 @@
+
+# Main class providing all functionality
+# associated with a specific panorama element.
+# Instanciate me once per panorama to display.
+#
+# Only functions should be accessed from the outside
+# all non-function members are generally considered private.
+# Only access function without a leading underscore, 
+# underscore methods are considered private.
+#
 class window.SimplePanorama
   @modules: {}  # stores all modules available for each SimplePanorama instance
   # whether to use css 3d transformations,
   # 3d transform is gpu-accellerated but produces artifacts in safari
   @use3DTransform: Modernizr.csstransforms3d and (navigator.userAgent.indexOf('Safari') < 0 or navigator.userAgent.indexOf('Chrome') > -1)
 
+  # Creates a new panorama inside the specified element.
+  # Must be supplied with a options hash containing all relevant parameters.
+  #
   constructor: (options) ->
     @maxPos = {x:0,y:0}      # the maximum valid position
     @size = {x:0,y:0}        # the size of the view
@@ -61,7 +74,7 @@ class window.SimplePanorama
       
       pano.lastTick = (new Date).getTime()
       pano.updateSpeedTicks = 0
-      window.setInterval((-> pano.updatePano()), 1)
+      window.setInterval((-> pano._updatePano()), 1)
       
       pano.elem.mousedown (event) -> event.preventDefault()
       pano.elem.attr("oncontextmenu", "return false;")
@@ -87,7 +100,7 @@ class window.SimplePanorama
       
     @img.src = imgFile    
   
-  updateSpeed: ->
+  _updateSpeed: ->
     if @speedOverride.x
       @speed.x = @speedOverride.x
       @speedOverride.x = false
@@ -100,17 +113,21 @@ class window.SimplePanorama
     else
       @speed.y = (1.8*@speed.y + 0.2*@targetSpeed.y)/2
       
-  setSpeedX: (speed) ->
-    @speedOverride.x = speed
-    
-  setSpeedY: (speed) ->
-    @speedOverride.y = speed
+  # Set the current speed without any transition.
+  # Does not change the target speed!
+  #
+  setCurrentSpeed: (x, y = false) ->
+    @speedOverride.x = x if x
+    @speedOverride.y = y if y
       
-  doTargetSpeed: (x, y = 0) ->
+  # Set the target speed, current speed will start
+  # to approach target speed.
+  #
+  setTargetSpeed: (x, y = 0) ->
     @targetSpeed.x = x
     @targetSpeed.y = y
     
-  boundCoordinate: (value, max) ->
+  _boundCoordinate: (value, max) ->
     if value > 0
       0
     else if value < -max
@@ -118,22 +135,22 @@ class window.SimplePanorama
     else
       value
     
-  updatePano: ->
+  _updatePano: ->
     ticks = new Date().getTime()
     passedTicks = ticks - @lastTick
     @lastTick = ticks
     @updateSpeedTicks += passedTicks
     
     if @updateSpeedTicks > 50
-      @updateSpeed()
+      @_updateSpeed()
       @updateSpeedTicks = 0
     
     unless @subElem is null
       newPosX = @pos.x + @speed.x*passedTicks
       newPosY = @pos.y + @speed.y*passedTicks
       
-      @pos.x = if @isRepeative then newPosX % @maxPos.x else @boundCoordinate(newPosX, @maxPos.x)
-      @pos.y = @boundCoordinate(newPosY, @maxPos.y)
+      @pos.x = if @isRepeative then newPosX % @maxPos.x else @_boundCoordinate(newPosX, @maxPos.x)
+      @pos.y = @_boundCoordinate(newPosY, @maxPos.y)
 
       if SimplePanorama.use3DTransform
         transform = "translate3D(#{@pos.x}px, #{@pos.y}px, 0)"
@@ -147,18 +164,22 @@ class window.SimplePanorama
         @subElem.css("left", @pos.x-@offset + "px")
         @subElem.css("top", @pos.y + "px")
   
+  # adds a new hotspot resembling a circle
+  #
   createCircleHotspot: (content, x, y, r, category) ->
-    hs = @prepareHotspot(content, "sp-circ", x-r, y-r, r*2, r*2)
+    hs = @_prepareHotspot(content, "sp-circ", x-r, y-r, r*2, r*2)
     hs.css("border-radius", r + "px")
-    @populateTripleBuffer(hs, category)
+    @_populateTripleBuffer(hs, category)
     @hsCounter
   
+  # adds a new rectangular hotspot
+  #
   createRectHotspot: (content, x, y, w, h, category) ->
-    hs = @prepareHotspot(content, "sp-rect", x, y, w, h)
-    @populateTripleBuffer(hs, category)
+    hs = @_prepareHotspot(content, "sp-rect", x, y, w, h)
+    @_populateTripleBuffer(hs, category)
     @hsCounter
       
-  prepareHotspot: (content, cssClass, x, y, w, h) ->
+  _prepareHotspot: (content, cssClass, x, y, w, h) ->
     result = $('<div class="sp-number-' + ++@hsCounter + ' sp-hotspot ' + cssClass + '"><div class="sp-hotspot-content">' + content + '</div></div>')
     
     result.css
@@ -169,6 +190,9 @@ class window.SimplePanorama
     
     result
   
+  # returns the position of the given coordinates in relation
+  # to the panoramic image
+  #
   getRelativePos: (pageX, pageY) ->
     left = @elem.offset().left
     top = @elem.offset().top
@@ -180,10 +204,12 @@ class window.SimplePanorama
       result.y = 0
     result
   
+  # returns the current rotation of the image
+  #
   getRotation: ->
     @getRelativePos(@elem.offset().left, 0).x
   
-  populateTripleBuffer: (elem, category) ->
+  _populateTripleBuffer: (elem, category) ->
     @hotspots[category] = [] unless @hotspots[category]
     
     if @isRepeative
@@ -198,6 +224,8 @@ class window.SimplePanorama
     @subElem.append(elem)
     @hotspots[category].push elem
     
+  # shows/hides all hotspots of a certain category
+  #
   showHotspots: (category, visible = true) ->
     if @hotspots[category]
       for elem in @hotspots[category]
@@ -206,6 +234,8 @@ class window.SimplePanorama
         else
           $(elem).hide()
     
+  # deletes all hotspots of a certain category
+  #
   removeHotspots: (category) ->
     if @hotspots[category]
       for elem in @hotspots[category]
