@@ -10,10 +10,12 @@
   <script src="public/simple-panorama.js"></script>
   <script>
     $(window).on('resize', function() {
-      $('#myPanoContainer').css({
-      	height: $(window).innerHeight(),
-      	width: $(window).innerWidth()
-      });
+      setTimeout(function() {
+        $('#myPanoContainer').css({
+        	height: $(window).innerHeight(),
+        	width: $(window).innerWidth()
+        });
+      }, 100);
     });
     
     $(function() {
