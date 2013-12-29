@@ -1,10 +1,9 @@
-﻿# SimplePanorama
+?# SimplePanorama
 
 [Here](http://tilow.github.com/SimplePanorama/) you can take a look at the script in action.
 SimplePanorama is available under the [MIT License](https://github.com/TiloW/SimplePanorama/blob/master/LICENSE).
 
-If you encounter any problems, feel free to send me a [mail](mailto:tilo@wiedera.de)
-or create a question on the [wiki](https://github.com/TiloW/SimplePanorama/wiki).
+If you encounter any problems, feel free to send me a [mail](mailto:tilo@wiedera.de).
 ## Purpose
 
 SimplePanorama is a javascript snippet, allowing you to create a cyclindric panorama for your website in no time.
@@ -12,7 +11,7 @@ SimplePanorama makes use of CSS 3D Transforms and gracefully falls back to other
 
 ## Requirements
 
-SimplePanorama requires JQuery, it has so far only been tested with version 1.8.3 but it will probably also work with older versions.
+SimplePanorama requires JQuery and Modernizr it has so far only been tested with version 1.8.3 but it will probably also work with older versions.
 
 ## Setup
 
@@ -22,7 +21,7 @@ You need to include [JQuery](http://jquery.com/download/),
 
 ## Usage
 
-Take a look at the [demo section](https://github.com/TiloW/SimplePanorama/tree/master/public/demos)!
+Take a look at the [demo section](https://github.com/TiloW/SimplePanorama/tree/master/public/test)!
 
 ### Creating a Panorama
 You can create a new panorama after your DOM is loaded.
@@ -47,8 +46,8 @@ pano.targetSpeed = 0.1
 ### Adding Hotspots
 You can add hotspots to a panorama after it has finished loading.
 Here we add a circle and a rectangle.
-As you can see, we can embed any html-elements inside of the hotspots.
-THe circle methods takes html-content, x,y and radius. A rectangle must be provided html-content, left, top, width and height.
+As you can see, one can embed any html-elements inside of the hotspots.
+The circle methods takes html-content, x,y and radius. A rectangle function call must be provided with html-content, left, top, width and height.
 ```javascript
 new SimplePanorama({
   'selector':  '#myPanoContainer', 
@@ -72,9 +71,11 @@ new SimplePanorama({
 ```	
 For the time beeing theese modules are available:
 - **move_mousedown**: Move the panorama around by dragging it
+- **move_swipe**: Move the panorama around with a touchscreen
+- **show_coordinates**: Displays the exact cursor position in the panorama
+
 - **move_mousehover**: Move the panorama around by hovering over it
 - **move_touch**: Move the panorama around with a touchscreen
-- **move_swipe**: Move the panorama around with a touchscreen (different version, just try)
 
 ### Options
 As you can see, there are some options which can (or must) be provided to the constructor. Here's a complete list:
@@ -83,7 +84,7 @@ As you can see, there are some options which can (or must) be provided to the co
 - **imgPath**: the path to your image file
 - **callback**: a function to be called after loading the image and initializing the panorama (mostly used to setup hotspots)
 - **modules**: an array of modules to be activated for this instance
-- **repeative**: set to "false" if you dont want your panorama to be a full 360° shot
+- **repeative**: set to "false" if you dont want your panorama to be a full 360� shot
 - **initialPos**: the intial rotation of the image (e.g. a value of 300 would result in the first 300 pixels to be hidden on the left)
 
 ### Styling Hotspots
@@ -93,4 +94,3 @@ Theese are the most important CSS classes:
 - **sp-rect**: a rectangular hotspot
 - **sp-circ**: a circular hotspot
 - **sp-hotspot-content**: a wrapper inside of every hotspot, set "color" and "font" here, also you can change the padding if need be
-
