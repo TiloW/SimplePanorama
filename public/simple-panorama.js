@@ -76,7 +76,7 @@
         pano.lastTick = (new Date).getTime();
         pano.updateSpeedTicks = 0;
         window.setInterval((function() {
-          return pano.updatePano();
+          return pano._updatePano();
         }), 1);
         pano.elem.mousedown(function(event) {
           return event.preventDefault();
@@ -105,7 +105,7 @@
       this.img.src = imgFile;
     }
 
-    SimplePanorama.prototype.updateSpeed = function() {
+    SimplePanorama.prototype._updateSpeed = function() {
       if (this.speedOverride.x) {
         this.speed.x = this.speedOverride.x;
         this.speedOverride.x = false;
@@ -120,15 +120,19 @@
       }
     };
 
-    SimplePanorama.prototype.setSpeedX = function(speed) {
-      return this.speedOverride.x = speed;
+    SimplePanorama.prototype.setCurrentSpeed = function(x, y) {
+      if (y == null) {
+        y = false;
+      }
+      if (x) {
+        this.speedOverride.x = x;
+      }
+      if (y) {
+        return this.speedOverride.y = y;
+      }
     };
 
-    SimplePanorama.prototype.setSpeedY = function(speed) {
-      return this.speedOverride.y = speed;
-    };
-
-    SimplePanorama.prototype.doTargetSpeed = function(x, y) {
+    SimplePanorama.prototype.setTargetSpeed = function(x, y) {
       if (y == null) {
         y = 0;
       }
@@ -136,7 +140,7 @@
       return this.targetSpeed.y = y;
     };
 
-    SimplePanorama.prototype.boundCoordinate = function(value, max) {
+    SimplePanorama.prototype._boundCoordinate = function(value, max) {
       if (value > 0) {
         return 0;
       } else if (value < -max) {
@@ -146,21 +150,21 @@
       }
     };
 
-    SimplePanorama.prototype.updatePano = function() {
+    SimplePanorama.prototype._updatePano = function() {
       var newPosX, newPosY, passedTicks, ticks, transform;
       ticks = new Date().getTime();
       passedTicks = ticks - this.lastTick;
       this.lastTick = ticks;
       this.updateSpeedTicks += passedTicks;
       if (this.updateSpeedTicks > 50) {
-        this.updateSpeed();
+        this._updateSpeed();
         this.updateSpeedTicks = 0;
       }
       if (this.subElem !== null) {
         newPosX = this.pos.x + this.speed.x * passedTicks;
         newPosY = this.pos.y + this.speed.y * passedTicks;
-        this.pos.x = this.isRepeative ? newPosX % this.maxPos.x : this.boundCoordinate(newPosX, this.maxPos.x);
-        this.pos.y = this.boundCoordinate(newPosY, this.maxPos.y);
+        this.pos.x = this.isRepeative ? newPosX % this.maxPos.x : this._boundCoordinate(newPosX, this.maxPos.x);
+        this.pos.y = this._boundCoordinate(newPosY, this.maxPos.y);
         if (SimplePanorama.use3DTransform) {
           transform = "translate3D(" + this.pos.x + "px, " + this.pos.y + "px, 0)";
           return this.subElem.css({
@@ -179,20 +183,20 @@
 
     SimplePanorama.prototype.createCircleHotspot = function(content, x, y, r, category) {
       var hs;
-      hs = this.prepareHotspot(content, "sp-circ", x - r, y - r, r * 2, r * 2);
+      hs = this._prepareHotspot(content, "sp-circ", x - r, y - r, r * 2, r * 2);
       hs.css("border-radius", r + "px");
-      this.populateTripleBuffer(hs, category);
+      this._populateTripleBuffer(hs, category);
       return this.hsCounter;
     };
 
     SimplePanorama.prototype.createRectHotspot = function(content, x, y, w, h, category) {
       var hs;
-      hs = this.prepareHotspot(content, "sp-rect", x, y, w, h);
-      this.populateTripleBuffer(hs, category);
+      hs = this._prepareHotspot(content, "sp-rect", x, y, w, h);
+      this._populateTripleBuffer(hs, category);
       return this.hsCounter;
     };
 
-    SimplePanorama.prototype.prepareHotspot = function(content, cssClass, x, y, w, h) {
+    SimplePanorama.prototype._prepareHotspot = function(content, cssClass, x, y, w, h) {
       var result;
       result = $('<div class="sp-number-' + ++this.hsCounter + ' sp-hotspot ' + cssClass + '"><div class="sp-hotspot-content">' + content + '</div></div>');
       result.css({
@@ -222,7 +226,7 @@
       return this.getRelativePos(this.elem.offset().left, 0).x;
     };
 
-    SimplePanorama.prototype.populateTripleBuffer = function(elem, category) {
+    SimplePanorama.prototype._populateTripleBuffer = function(elem, category) {
       var c1, c2, left;
       if (!this.hotspots[category]) {
         this.hotspots[category] = [];
@@ -292,12 +296,12 @@
     });
     $("*").on('mousemove', function(event) {
       if (data.mouseStart !== void 0) {
-        return pano.doTargetSpeed((data.mouseStart.x - event.pageX) / $(window).width() * 3, (data.mouseStart.y - event.pageY) / $(window).height() * 3);
+        return pano.setTargetSpeed((data.mouseStart.x - event.pageX) / $(window).width() * 3, (data.mouseStart.y - event.pageY) / $(window).height() * 3);
       }
     });
     return $("*").on('mouseup', function(event) {
       if (data.mouseStart !== void 0 && event.which === 1) {
-        pano.doTargetSpeed(0);
+        pano.setTargetSpeed(0);
         pano.elem.css("cursor", "auto");
         return data.mouseStart = void 0;
       }
@@ -311,10 +315,10 @@
     return function(pano) {
       return pano.elem.on('mousemove', function(event) {
         var setZero;
-        pano.doTargetSpeed(2 - (event.pageX - pano.elem.position().left) / pano.elem.width() * 4);
+        pano.setTargetSpeed(2 - (event.pageX - pano.elem.position().left) / pano.elem.width() * 4);
         setZero = pano.targetSpeed.x > 0 ? pano.targetSpeed.x < 1 : pano.targetSpeed.x > -1;
         if (setZero) {
-          return pano.doTargetSpeed(0);
+          return pano.setTargetSpeed(0);
         }
       });
     };
@@ -329,7 +333,7 @@
         x: event.originalEvent.touches[0].pageX,
         y: event.originalEvent.touches[0].pageY
       };
-      return pano.doTargetSpeed(0, 0);
+      return pano.setTargetSpeed(0);
     });
     $("*").on("touchmove", function(event) {
       var speed, tmp;
@@ -342,12 +346,13 @@
           x: (tmp.x - data.touchStart.x) / 100,
           y: (tmp.y - data.touchStart.y) / 100
         };
-        if (Math.abs(speed.x) > Math.abs(pano.speed.x)) {
-          pano.setSpeedX(speed.x);
+        if (Math.abs(speed.x) < Math.abs(pano.speed.x)) {
+          speed.x = false;
         }
-        if (Math.abs(speed.y) > Math.abs(pano.speed.y)) {
-          pano.setSpeedY(speed.y);
+        if (Math.abs(speed.y) < Math.abs(pano.speed.y)) {
+          speed.y = false;
         }
+        pano.setCurrentSpeed(speed.x, speed.y);
         return data.touchStart = tmp;
       }
     });
@@ -370,12 +375,12 @@
     });
     $("*").on("touchmove", function(event) {
       if (data.touchStart !== void 0) {
-        return pano.doTargetSpeed((data.touchStart.x - event.originalEvent.touches[0].pageX) / 200, (data.touchStart.y - event.originalEvent.touches[0].pageY) / 200);
+        return pano.setTargetSpeed((data.touchStart.x - event.originalEvent.touches[0].pageX) / 200, (data.touchStart.y - event.originalEvent.touches[0].pageY) / 200);
       }
     });
     return $("*").on("touchend", function() {
       if (data.touchStart !== void 0) {
-        pano.doTargetSpeed(0);
+        pano.setTargetSpeed(0);
         return data.touchStart = void 0;
       }
     });

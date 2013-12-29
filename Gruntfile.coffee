@@ -36,7 +36,7 @@ module.exports = (grunt) ->
     watch:
       scripts:
         files: ['src/**']
-        tasks: ['test']
+        tasks: ['prepareServer']
 
   grunt.registerTask 'build', ['coffee', 'sass', 'uglify', 'cssmin']
   grunt.registerTask 'prepareServer', ['build', 'copy']

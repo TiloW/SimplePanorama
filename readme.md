@@ -40,7 +40,7 @@ pano = new SimplePanorama({
   'elem':      $('#myPanoContainer'), 
   'imagePath': '../my_image.jpg'
 });
-pano.targetSpeed = 0.1
+pano.setTargetSpeed(0.1);
 ```
 
 ### Adding Hotspots
