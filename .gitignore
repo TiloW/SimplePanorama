@@ -2,3 +2,5 @@
 .sass-cache
 -p
 js
+node_modules
+test

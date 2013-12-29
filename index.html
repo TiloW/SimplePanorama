@@ -5,9 +5,10 @@
   <meta name="viewport" content="height=device-height">
   <title>SimplePanorama</title>
   <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Changa+One" />
-  <link rel="stylesheet" href="simple-panorama.css" />
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-  <script src="simple-panorama.js"></script>
+  <link rel="stylesheet" href="simple-panorama.min.css" />
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="modernizr.js"></script>
+  <script src="simple-panorama.min.js"></script>
   <style>  
   
     html {
@@ -71,19 +72,21 @@
     $(function() {
       pano = new SimplePanorama({
         'selector':  '#panoContainer',
+        'initialPos': 2000,
         'imagePath': 'http://www.panorama-cities.net/osnabrueck/panoramas/schlosspark_5.jpg',
         'modules': ['move_mousedown', 'move_swipe'],
         'callback':  function() {
           pano.createRectHotspot('<p><a href="http://en.wikipedia.org/wiki/Water">Water</a> Spring</p>', 260, 250, 300, 170);
         }
       });
-      pano.targetSpeed = .05
+      pano.setTargetSpeed(0.1);
     });
   </script>
 </head>
 <body>
   <h1>Simple Panorama</h1>
   <p>
+    fully customizable<br />
     pure HTML5 & CSS3 panoramic viewer for your website<br />
     available under the <a href="https://github.com/TiloW/SimplePanorama/blob/master/LICENSE">MIT license</a> on <a href="https://github.com/TiloW/SimplePanorama">github</a><br />
   </p>
