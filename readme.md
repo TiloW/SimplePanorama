@@ -1,4 +1,4 @@
-?# SimplePanorama
+# SimplePanorama
 
 [Here](http://tilow.github.com/SimplePanorama/) you can take a look at the script in action.
 SimplePanorama is available under the [MIT License](https://github.com/TiloW/SimplePanorama/blob/master/LICENSE).
@@ -21,7 +21,7 @@ You need to include [JQuery](http://jquery.com/download/),
 
 ## Usage
 
-Take a look at the [demo section](https://github.com/TiloW/SimplePanorama/tree/master/public/test)!
+Take a look at the [demo section](https://github.com/TiloW/SimplePanorama/tree/master/test)!
 
 ### Creating a Panorama
 You can create a new panorama after your DOM is loaded.
@@ -84,7 +84,7 @@ As you can see, there are some options which can (or must) be provided to the co
 - **imgPath**: the path to your image file
 - **callback**: a function to be called after loading the image and initializing the panorama (mostly used to setup hotspots)
 - **modules**: an array of modules to be activated for this instance
-- **repeative**: set to "false" if you dont want your panorama to be a full 360° shot
+- **repeative**: set to "false" if you dont want your panorama to be a full 360ï¿½ shot
 - **initialPos**: the intial rotation of the image (e.g. a value of 300 would result in the first 300 pixels to be hidden on the left)
 
 ### Styling Hotspots
